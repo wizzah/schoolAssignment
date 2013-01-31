@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Drag and Drop tester</title>
+  <style>
+  [draggable] {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  body {
+    text-align: center;
+    background-color: #ebe5e5;
+    color: #36303e;
+    font-family: verdana, sans-serif;
+    height: 100%;
+    margin-top: 100px;
+
+  }
+
+  #dragzone {
+    width: 660px;
+    margin: 0 auto;
+    margin-bottom: 30px;
+  }
+
+  .coupon-dump {
+    height: 200px;
+    width: 200px;
+    float: left;
+    background: #e3d9d9;
+    margin: 10px;
+    border-radius: 4px;
+  }
+
+  .coupon-dump p {
+    line-height: 1.5em;
+    padding-top: 35px;
+  }
+
+  .shadow {
+    box-shadow: 0px 2px 12px 2px rgba(180, 180, 180, 0.5) inset;
+  }
+
+  img {
+    padding: 6px;
+    border-radius: 4px;
+
+  }
+  </style>
+</head>
+<body>
+  <div id="dragzone">
+    <div class="coupon-dump" data-type="19">
+      <p>Type A blood from starving college students, $19/month</p>
+    </div>
+    <div class="coupon-dump" data-type="39">
+      <p>All blood types and access to healthy, fully professionals for $39/month</p>
+    </div>
+    <div class="coupon-dump" data-type="0">
+      <p>FREE! Access to attorneys.</p>
+    </div>
+    <img src="http://i.imgur.com/poJCb4P.jpg" data-coupon="5" draggable="true" alt="$5" />
+    <img src="http://i.imgur.com/xBILtWC.jpg" data-coupon="10" draggable="true" alt="$10" />
+    <img src="http://i.imgur.com/en1NiBP.jpg" data-coupon="25" draggable="true" alt="$25" />
+  </div>
+  <p id="results">Drag and drop your coupon onto whichever deal you like best!</p>
+  <script type="text/javascript">
+            // this variable will hold a reference to the current element being dragged
+            var drag_object;
+
+            // get container where draggin n' droppin can happen
+            var drag_zone = document.getElementById('dragzone');
+
+            // bind events to container. I only used the necessary ones to make this example work
+            drag_zone.addEventListener('dragstart', function(e) {
+                // save element that is being dragged to global scope
+                drag_object = e.target;
+              }, false);
+
+            drag_zone.addEventListener('dragover', function(e) {
+                // prevent default html element action from happening while we're dragging stuff
+                if(e.preventDefault) {
+                  e.preventDefault();
+                }
+
+                //if it has class of coupon-dump
+                if(e.target.className.match(/\bcoupon-dump\b/)) {
+                  e.target.classList.add("shadow");
+                }
+              }, false);
+
+            drag_zone.addEventListener('dragleave', function(e) {
+              e.target.classList.remove("shadow");
+            });
+
+            drag_zone.addEventListener('drop', function(e) {
+                // check to make sure we are dropping an element into the container we want
+                if(e.target.className.match(/\bcoupon-dump\b/)) {
+                    // cut out hard returns from container html text
+                    var drop_container = e.target.getAttribute("data-type");
+                    var results = document.getElementById("results");
+                    var coupon = drag_object.getAttribute("data-coupon");
+                    // e.target.classList.remove("shadow");
+                    // display results
+                    if(drop_container == "0") {
+                      results.innerHTML = "You chose the totally free option! Take the attorneys, we don't need 'em!";
+                    } else {
+                      results.innerHTML = "You chose the $"+coupon+" coupon, which means your first month is $"+(drop_container - coupon+" with every next month being $"+drop_container+".");
+                    }
+                    var empty = document.getElementById("dragzone");
+                    empty.parentNode.removeChild(empty);
+                  }
+                }, false);
+</script>
+</body>
+</html>
